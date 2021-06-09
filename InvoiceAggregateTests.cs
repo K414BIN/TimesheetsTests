@@ -5,6 +5,7 @@ using System.Text;
 using Xunit;
 using FluentAssertions;
 using Timesheets.Models.Entities;
+using System.Linq;
 
 namespace TimesheetsTests
 {
@@ -12,12 +13,12 @@ namespace TimesheetsTests
     {
         private static Random rnd = new Random();
         public static int startIndex = rnd.Next(1, 8);
+        private IEnumerable<int> testRange = Enumerable.Range(1, startIndex);
 
-        public static IEnumerable<Sheet> testSheets = new List<Sheet>
+        public static IEnumerable<Sheet> TestSheets = new List<Sheet>()
         {
-            Capacity = startIndex 
         };
-
+    
         [Fact]
         public void InvoiceAggregate_CreateRequest()
         {
@@ -33,19 +34,19 @@ namespace TimesheetsTests
 
             yield return new object[]
             {
-                testSheets
+                TestSheets
             };
         }
 
         [Theory]
         [MemberData(nameof(TestData))]
-        public void InvoiceAggregate_CalcTheTestSum(List<Sheet> testsheet)
+        public void InvoiceAggregate_CalcTheTestSum( IEnumerable<Sheet> testSheets)
         {
             var builder = new InvoiceAggregateBuilder();
             var sheet = builder.CreateTestObjectInvoiceAggregate();
 
-            sheet.IncludeSheets(testsheet);
-            sheet.Should().Be(testsheet);
+            sheet.IncludeSheets(testSheets);
+            sheet.Should().Be(testSheets);
         }
     }
 }
